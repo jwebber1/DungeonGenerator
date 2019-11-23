@@ -7,15 +7,15 @@ class Environment {
     def col = 0
     List environment = []
 
-    Environment(rowIn, colIn) {
-        this.row = rowIn
-        this.col = colIn
+    Environment(width, height) {
+        this.row = width
+        this.col = height
     }
 
     public void printEnvironment(){
-        for(int i = 0; i < environment.size()-1; i++){
+        for(int i = 0; i < col; i++){
             List temp = environment.get(i)
-            for(int j = 0; j < temp.size()-1; j++){ printf('%s ', environment[i][j]) }
+            for(int j = 0; j < row; j++) printf('%s ', environment[i][j])
             println()
         }
     }
@@ -35,7 +35,7 @@ class Environment {
 
         //random starting column
         def temp = rand.nextInt(col)
-        while(temp == 0 || temp == col - 1) temp = rand.nextInt(col)   //guarantees starting point will not be on edge
+        while(temp == 0 || temp == col - 1) temp = rand.nextInt(col)    //guarantees starting point will not be on edge
         def randCol = temp
 
         //random starting row
@@ -43,44 +43,33 @@ class Environment {
         while(temp == 0 || temp == row - 1) temp = rand.nextInt(row)    //guarantees starting point will not be on edge
         def randRow = temp
 
-        //println("randCol = " + randCol + "\nrandRow = " + randRow)
-
         //super small, simple logic for number of tunnels, will probably change
         def numTunnels
         if(row+col <= 20) numTunnels = row*col
         else  numTunnels = (int)(row*col - (row*col)*Math.pow(0.995, Math.min(row,col)))
-
-        //println "numTunnels = " + numTunnels
 
         //variable to hold the old direction so that we don't duplicate directions each iteration
         def oldDir = -1
 
         //go through all the specified tunnels
         for(int i = 0; i < numTunnels; i++){
-            //println "i = " + i
 
-            //4. Choose a random length from maximum allowed length
+            //choose a random length from maximum allowed length
             def randLength = rand.nextInt(maxLength) + 1 // the + 1 is in case the random number chosen is 0
-
-            //println "randLength = " + randLength
 
             //random direction between 0-3: 0 = up, 1 = right, 2 = down, 3 = left
             temp = rand.nextInt(4)
             while(temp == oldDir) temp = rand.nextInt(4)
             def randDir = temp
 
-            //println "randDir = " + getDir(randDir)
-
             //create the tunnel
             for(int j = 0; j < randLength; j++){
-                //println "atEdge = " + atEdge(randDir, randRow, randCol, row, col)
 
                 //if not at the edge of the environment...
                 if(!atEdge(randDir, randRow, randCol, row, col)){
-                    //print j + " "
 
                     //set the character at the given row and column
-                    environment[randRow][randCol] = "."
+                    environment[randCol][randRow] = "."
 
                     //move in the next direction
                     if(randDir == 0) { randRow -= 1 }       //move up one
@@ -95,8 +84,6 @@ class Environment {
 
             //set the old direction to the most recent
             oldDir = randDir
-
-            //println()
         }
     }
 
